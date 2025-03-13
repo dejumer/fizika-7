@@ -1,0 +1,2919 @@
+<!DOCTYPE html>
+<html lang="bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Подробно решение на задача по физика</title>
+    <style>
+      :root {
+        --primary-color: #4a90e2; /* По-наситен син */
+        --secondary-color: #50c878; /* По-дълбок зелен */
+        --accent-color: #f07656; /* Приглушен оранжев */
+        --dark-color: #36486b; /* Тъмносин */
+        --light-color: #f8f8f8; /* Светлосив */
+        --border-radius: 10px;
+        --shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        --transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+        --gradient-bg: linear-gradient(
+          135deg,
+          var(--light-color) 0%,
+          #f2f6fa 100%
+        );
+        --gradient-accent: linear-gradient(
+          135deg,
+          var(--accent-color) 0%,
+          #f7a070 100%
+        );
+        --gradient-primary: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          #6aa8e7 100%
+        );
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap");
+
+      body {
+        font-family: "Roboto", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: var(--gradient-bg);
+        color: #444;
+        line-height: 1.6;
+        transition: var(--transition);
+        overflow-x: hidden;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        animation: fadeIn 0.8s ease-out;
+      }
+
+      header {
+        background: linear-gradient(135deg, var(--dark-color) 0%, #455a87 100%);
+        color: white;
+        padding: 25px 0;
+        text-align: center;
+        margin-bottom: 30px;
+        box-shadow: var(--shadow);
+        border-radius: 0 0 var(--border-radius) var(--border-radius);
+        position: relative;
+        overflow: hidden;
+      }
+
+      header::before {
+        content: "";
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.1) 0%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        transform: rotate(-5deg);
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 2.5em;
+        font-family: "Comfortaa", cursive;
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        animation: slideInDown 1s ease-out;
+      }
+
+      header p {
+        margin: 10px 0 0;
+        font-size: 1.3em;
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+        font-weight: 300;
+        animation: slideInUp 1s ease-out;
+      }
+
+      nav {
+        background-color: white;
+        padding: 15px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        margin-bottom: 30px;
+        overflow-x: auto;
+        transition: var(--transition);
+        transform: translateY(0);
+        position: relative; /* Премахваме sticky позиционирането */
+        z-index: 50;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        animation: fadeInDown 0.8s ease-out;
+      }
+
+      nav ul {
+        display: flex;
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        justify-content: center;
+        flex-wrap: wrap;
+        min-width: 650px;
+      }
+
+      nav li {
+        margin: 5px 8px;
+        transform: translateY(0);
+        transition: transform 0.3s ease;
+      }
+
+      nav li:hover {
+        transform: translateY(-3px);
+      }
+
+      nav a {
+        text-decoration: none;
+        color: var(--dark-color);
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: var(--transition);
+        display: inline-block;
+        background: transparent;
+        border: 2px solid transparent;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      nav a:hover {
+        background: var(--gradient-primary);
+        color: white;
+        box-shadow: 0 5px 15px rgba(245, 167, 161, 0.4);
+        transform: translateY(-2px);
+      }
+
+      nav a.active {
+        background: var(--gradient-primary);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 5px 15px rgba(245, 167, 161, 0.4);
+      }
+
+      .page {
+        display: none;
+        background-color: white;
+        padding: 35px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        margin-bottom: 30px;
+        opacity: 0;
+        transform: translateY(30px);
+        transition: none;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .page::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: var(--gradient-primary);
+        opacity: 0.7;
+      }
+
+      .page.active {
+        display: block;
+        animation: pageEnter 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+          forwards;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pageEnter {
+        0% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        70% {
+          opacity: 1;
+          transform: translateY(-5px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .page h2 {
+        color: var(--dark-color);
+        border-bottom: none;
+        padding-bottom: 15px;
+        margin-top: 0;
+        margin-bottom: 30px;
+        position: relative;
+        font-family: "Nunito", sans-serif;
+        font-weight: 600;
+        animation: slideInDown 0.8s ease-out;
+      }
+
+      .page h2::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100px;
+        height: 3px;
+        background: var(--primary-color);
+        border-radius: 3px;
+        transition: width 0.6s ease;
+      }
+
+      .page.active h2::after {
+        width: 180px;
+      }
+
+      .box {
+        background-color: rgba(255, 255, 255, 0.8);
+        border-left: 4px solid;
+        padding: 25px;
+        margin: 25px 0;
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+        transform: translateY(0);
+        opacity: 0;
+        animation: fadeIn 0.8s ease-out forwards;
+        animation-delay: 0.3s;
+      }
+
+      .box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
+      }
+
+      .info-box {
+        border-left-color: var(--primary-color);
+        background: linear-gradient(
+          to right,
+          rgba(74, 144, 226, 0.1),
+          rgba(255, 255, 255, 0.7)
+        );
+      }
+
+      .warning-box {
+        border-left-color: var(--accent-color);
+        background: linear-gradient(
+          to right,
+          rgba(240, 118, 86, 0.1),
+          rgba(255, 255, 255, 0.7)
+        );
+      }
+
+      .success-box {
+        border-left-color: var(--secondary-color);
+        background: linear-gradient(
+          to right,
+          rgba(80, 200, 120, 0.1),
+          rgba(255, 255, 255, 0.7)
+        );
+      }
+
+      .formula-box {
+        background: linear-gradient(
+          135deg,
+          rgba(248, 248, 248, 0.9) 0%,
+          rgba(240, 246, 255, 0.7) 100%
+        );
+        padding: 20px;
+        border-radius: var(--border-radius);
+        margin: 20px 0;
+        border: 1px solid rgba(209, 224, 255, 0.3);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: var(--transition);
+        transform: translateY(0);
+        opacity: 0;
+        animation: fadeIn 0.8s ease-out forwards;
+        animation-delay: 0.4s;
+      }
+
+      .formula-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(74, 144, 226, 0.15);
+      }
+
+      .formula {
+        font-family: "Cambria Math", Georgia, serif;
+        font-style: italic;
+        text-align: center;
+        margin: 18px 0;
+        font-size: 1.25em;
+        color: var(--dark-color);
+        transition: var(--transition);
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
+        animation-delay: 0.6s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      /* Стилове за математически дроби */
+      .frac {
+        display: inline-block;
+        position: relative;
+        vertical-align: middle;
+        text-align: center;
+        margin: 0 3px;
+      }
+
+      .frac-top {
+        display: block;
+        padding: 0 3px;
+        text-align: center;
+        border-bottom: 1px solid;
+      }
+
+      .frac-bottom {
+        display: block;
+        padding: 0 3px;
+        text-align: center;
+      }
+
+      .sup {
+        vertical-align: super;
+        font-size: 0.8em;
+        margin: 0 1px;
+      }
+
+      .sub {
+        vertical-align: sub;
+        font-size: 0.8em;
+        margin: 0 1px;
+      }
+
+      .result {
+        font-weight: bold;
+        color: white;
+        font-size: 1.15em;
+        margin: 25px 0;
+        padding: 15px;
+        background: var(--gradient-accent);
+        border-radius: var(--border-radius);
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(240, 118, 86, 0.2);
+        transition: var(--transition);
+        opacity: 0;
+        animation: fadeIn 0.8s ease-out forwards;
+        background-size: 200% 200%;
+        animation-delay: 0.5s;
+      }
+
+      .result:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(255, 136, 130, 0.3);
+      }
+
+      .step {
+        margin-bottom: 35px;
+        padding: 5px 0 25px 30px;
+        border-left: 3px solid rgba(245, 167, 161, 0.3);
+        position: relative;
+        opacity: 0;
+        animation: fadeIn 0.8s ease-out forwards;
+        animation-delay: 0.2s;
+        transition: var(--transition);
+      }
+
+      .step:hover {
+        border-left-color: var(--primary-color);
+      }
+
+      .step::before {
+        content: "";
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          #fbdbc8 100%
+        );
+        border-radius: 50%;
+        left: -12.5px;
+        top: 5px;
+        box-shadow: 0 3px 8px rgba(245, 167, 161, 0.4);
+        transition: var(--transition);
+        animation: pulse 2s infinite;
+      }
+
+      .step:hover::before {
+        transform: scale(1.2);
+        box-shadow: 0 5px 15px rgba(245, 167, 161, 0.6);
+      }
+
+      .step h3 {
+        color: var(--dark-color);
+        margin-top: 0;
+        margin-bottom: 18px;
+        font-family: "Comfortaa", cursive;
+        font-weight: 600;
+        transition: var(--transition);
+      }
+
+      .step:hover h3 {
+        color: var(--primary-color);
+        transform: translateX(5px);
+      }
+
+      .visualization {
+        text-align: center;
+        margin: 40px 0;
+        opacity: 0;
+        animation: fadeIn 1s ease-out forwards;
+        animation-delay: 0.3s;
+      }
+
+      svg {
+        max-width: 100%;
+        height: auto;
+        background: linear-gradient(135deg, white 0%, #fdfdfd 100%);
+        box-shadow: var(--shadow);
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+        transform: translateY(0);
+      }
+
+      svg:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(245, 167, 161, 0.2);
+      }
+
+      svg line,
+      svg path,
+      svg circle {
+        transition: all 0.3s ease;
+      }
+
+      svg:hover line[stroke="#666"] {
+        stroke: var(--dark-color);
+      }
+
+      svg:hover circle {
+        r: 6;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 25px 0;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        opacity: 0;
+        animation: fadeIn 0.8s ease-out forwards;
+        animation-delay: 0.5s;
+      }
+
+      table,
+      th,
+      td {
+        border: none;
+      }
+
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+        transition: all 0.3s ease;
+      }
+
+      th {
+        background: var(--gradient-primary);
+        color: white;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+
+      tr {
+        transition: var(--transition);
+        background-color: white;
+      }
+
+      tr:nth-child(even) {
+        background-color: #fff9f9;
+      }
+
+      tr:hover {
+        background-color: #fff0ec;
+        transform: translateX(5px);
+      }
+
+      td {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .interactive-controls {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 249, 244, 0.8) 0%,
+          rgba(252, 243, 240, 0.8) 100%
+        );
+        padding: 25px;
+        border-radius: var(--border-radius);
+        margin: 30px 0;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+        transition: var(--transition);
+        transform: translateY(0);
+        opacity: 0;
+        animation: fadeIn 0.8s ease-out forwards;
+        animation-delay: 0.4s;
+      }
+
+      .interactive-controls:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+      }
+
+      .interactive-controls h3 {
+        margin-top: 0;
+        color: var(--dark-color);
+        font-family: "Comfortaa", cursive;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+
+      .interactive-controls label {
+        font-weight: 600;
+        display: inline-block;
+        width: 150px;
+        margin-bottom: 10px;
+      }
+
+      .interactive-controls input {
+        width: 120px;
+        padding: 10px;
+        margin: 10px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 20px;
+        text-align: center;
+        font-family: "Quicksand", sans-serif;
+        transition: var(--transition);
+      }
+
+      .interactive-controls input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(245, 167, 161, 0.2);
+      }
+
+      button {
+        background: var(--gradient-primary);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: var(--transition);
+        margin: 12px 8px;
+        outline: none;
+        font-family: "Roboto", sans-serif;
+        font-size: 0.95em;
+        box-shadow: 0 5px 15px rgba(74, 144, 226, 0.2);
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+      }
+
+      button::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.2),
+          rgba(255, 255, 255, 0)
+        );
+        transition: all 0.6s ease;
+        z-index: -1;
+      }
+
+      button:hover {
+        background: var(--primary-color);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+      }
+
+      button:hover::before {
+        left: 100%;
+      }
+
+      button:disabled {
+        background: linear-gradient(135deg, #ccc 0%, #ddd 100%);
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      button:active {
+        transform: translateY(1px);
+        box-shadow: 0 3px 8px rgba(74, 144, 226, 0.2);
+      }
+
+      .prev-btn {
+        background: linear-gradient(135deg, #36486b 0%, #536b95 100%);
+        box-shadow: 0 5px 15px rgba(54, 72, 107, 0.3);
+      }
+
+      .prev-btn:hover {
+        background: #36486b;
+        box-shadow: 0 8px 20px rgba(54, 72, 107, 0.4);
+      }
+
+      footer {
+        text-align: center;
+        padding: 30px;
+        margin-top: 40px;
+        background: linear-gradient(135deg, var(--dark-color) 0%, #8896bf 100%);
+        color: white;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      footer::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--gradient-primary);
+        opacity: 0.7;
+      }
+
+      footer p {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        font-weight: 300;
+        letter-spacing: 0.5px;
+      }
+
+      .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        margin: 25px 0;
+        opacity: 0;
+        animation: fadeIn 0.8s ease-out forwards;
+        animation-delay: 0.3s;
+      }
+
+      @media (max-width: 768px) {
+        .grid-container {
+          grid-template-columns: 1fr;
+        }
+
+        header h1 {
+          font-size: 2em;
+        }
+
+        .page {
+          padding: 25px 15px;
+        }
+
+        .formula {
+          font-size: 1em;
+        }
+
+        button {
+          width: 100%;
+          margin: 10px 0;
+        }
+
+        .navigation-buttons {
+          flex-direction: column;
+        }
+      }
+
+      .key-point {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 250, 205, 0.4) 0%,
+          rgba(255, 250, 205, 0.2) 100%
+        );
+        padding: 18px;
+        border-left: 4px solid #ffd700;
+        margin: 20px 0;
+        border-radius: var(--border-radius);
+        box-shadow: 0 3px 10px rgba(255, 215, 0, 0.1);
+        transition: var(--transition);
+        transform: translateY(0);
+        opacity: 0;
+        animation: fadeIn 0.8s ease-out forwards;
+        animation-delay: 0.4s;
+      }
+
+      .key-point:hover {
+        transform: translateY(-3px) translateX(5px);
+        box-shadow: 0 6px 15px rgba(255, 215, 0, 0.15);
+        border-left-width: 6px;
+      }
+
+      .key-point p strong {
+        color: var(--dark-color);
+        font-weight: 700;
+      }
+
+      .note {
+        font-size: 0.95em;
+        opacity: 0.9;
+        font-style: italic;
+        color: #777;
+        padding: 10px 0;
+        transition: var(--transition);
+      }
+
+      .note:hover {
+        color: var(--dark-color);
+      }
+
+      .graph-container {
+        height: 400px;
+        margin: 40px 0;
+        position: relative;
+        border-radius: var(--border-radius);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        background: white;
+        padding: 10px;
+        transition: var(--transition);
+        opacity: 0;
+        animation: fadeIn 1s ease-out forwards;
+        animation-delay: 0.5s;
+      }
+
+      .graph-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(245, 167, 161, 0.15);
+      }
+
+      /* Loading indicator for charts */
+      .chart-loading {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        z-index: 10;
+        border-radius: var(--border-radius);
+      }
+
+      .loader {
+        border: 5px solid rgba(245, 167, 161, 0.1);
+        border-top: 5px solid var(--primary-color);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1.2s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+        box-shadow: 0 3px 10px rgba(245, 167, 161, 0.2);
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Next/prev navigation */
+      .navigation-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 40px;
+        opacity: 0;
+        animation: fadeIn 0.8s ease-out forwards;
+        animation-delay: 0.7s;
+      }
+
+      /* Print styles */
+      @media print {
+        nav,
+        .navigation-buttons,
+        .interactive-controls button {
+          display: none;
+        }
+
+        .page {
+          display: block !important;
+          box-shadow: none;
+          break-inside: avoid;
+          page-break-inside: avoid;
+          margin-bottom: 30px;
+          opacity: 1 !important;
+          transform: none !important;
+          animation: none !important;
+        }
+
+        .box,
+        .formula-box,
+        .result,
+        .step,
+        .key-point,
+        .grid-container,
+        .visualization {
+          opacity: 1 !important;
+          transform: none !important;
+          animation: none !important;
+          box-shadow: none !important;
+          border-left: 2px solid #888 !important;
+        }
+
+        .formula {
+          color: black !important;
+        }
+
+        body,
+        .container {
+          background: white !important;
+          background-image: none !important;
+        }
+
+        .chart-loading {
+          display: none;
+        }
+
+        footer {
+          background: #eee !important;
+          color: #333 !important;
+        }
+
+        header {
+          background: #eee !important;
+          color: #333 !important;
+        }
+
+        table {
+          box-shadow: none !important;
+        }
+
+        th {
+          background: #eee !important;
+          color: #333 !important;
+        }
+
+        /* Make sure all elements are visible */
+        * {
+          color-adjust: exact;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+
+      /* Particle effect for added visual appeal */
+      .particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      .particle {
+        position: absolute;
+        background: var(--primary-color);
+        border-radius: 50%;
+        opacity: 0.3;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>Физическа задача: Траектория на топка</h1>
+        <p>Подробно решение с обяснения и визуализации</p>
+      </div>
+    </header>
+
+    <div class="container">
+      <nav>
+        <ul>
+          <li>
+            <a href="#" class="tab-link active" data-tab="task">Условие</a>
+          </li>
+          <li>
+            <a href="#" class="tab-link" data-tab="concepts"
+              >Физични концепции</a
+            >
+          </li>
+          <li>
+            <a href="#" class="tab-link" data-tab="solution-1"
+              >Решение - част 1</a
+            >
+          </li>
+          <li>
+            <a href="#" class="tab-link" data-tab="solution-2"
+              >Решение - част 2</a
+            >
+          </li>
+          <li>
+            <a href="#" class="tab-link" data-tab="visualization"
+              >Визуализация</a
+            >
+          </li>
+          <li><a href="#" class="tab-link" data-tab="graphs">Графики</a></li>
+          <li>
+            <a href="#" class="tab-link" data-tab="tips">Методически насоки</a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Page 1: Task Description -->
+      <div id="task" class="page active">
+        <h2>Условие на задачата</h2>
+
+        <div class="box info-box">
+          <p>
+            От покрив с височина <strong>15 m</strong> топка се изстрелва под
+            <strong>60°</strong> спрямо хоризонтата с начална скорост
+            <strong>12 m/s</strong>. Приемайки, че ускорението на свободното
+            падане е <strong>g = 9.81 m/s²</strong>, определете:
+          </p>
+
+          <ol>
+            <li>Максималната височина на топката спрямо земята.</li>
+            <li>
+              Общото време на полета (от момента на изстрелване до достигане на
+              земята).
+            </li>
+            <li>Хоризонталното разстояние, което топката изминава.</li>
+          </ol>
+        </div>
+
+        <div class="visualization">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 600 300"
+            width="600"
+            height="300"
+            aria-labelledby="svgTitle"
+            role="img"
+          >
+            <title id="svgTitle">
+              Илюстрация на задачата с топка, изстреляна от покрив
+            </title>
+            <!-- Coordinate system -->
+            <line
+              x1="50"
+              y1="250"
+              x2="550"
+              y2="250"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <line
+              x1="50"
+              y1="250"
+              x2="50"
+              y2="30"
+              stroke="#666"
+              stroke-width="2"
+            />
+
+            <!-- X-axis ticks -->
+            <line
+              x1="50"
+              y1="255"
+              x2="50"
+              y2="245"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="50" y="270" text-anchor="middle" font-size="12">0</text>
+
+            <line
+              x1="150"
+              y1="255"
+              x2="150"
+              y2="245"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="150" y="270" text-anchor="middle" font-size="12">5</text>
+
+            <line
+              x1="250"
+              y1="255"
+              x2="250"
+              y2="245"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="250" y="270" text-anchor="middle" font-size="12">10</text>
+
+            <line
+              x1="350"
+              y1="255"
+              x2="350"
+              y2="245"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="350" y="270" text-anchor="middle" font-size="12">15</text>
+
+            <line
+              x1="450"
+              y1="255"
+              x2="450"
+              y2="245"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="450" y="270" text-anchor="middle" font-size="12">20</text>
+
+            <!-- Y-axis ticks -->
+            <line
+              x1="45"
+              y1="250"
+              x2="55"
+              y2="250"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="35" y="254" text-anchor="end" font-size="12">0</text>
+
+            <line
+              x1="45"
+              y1="200"
+              x2="55"
+              y2="200"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="35" y="204" text-anchor="end" font-size="12">5</text>
+
+            <line
+              x1="45"
+              y1="150"
+              x2="55"
+              y2="150"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="35" y="154" text-anchor="end" font-size="12">10</text>
+
+            <line
+              x1="45"
+              y1="100"
+              x2="55"
+              y2="100"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="35" y="104" text-anchor="end" font-size="12">15</text>
+
+            <line
+              x1="45"
+              y1="50"
+              x2="55"
+              y2="50"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="35" y="54" text-anchor="end" font-size="12">20</text>
+
+            <!-- Labels -->
+            <text x="575" y="270" font-size="12">x (m)</text>
+            <text x="35" y="30" font-size="12">y (m)</text>
+
+            <!-- Building/roof -->
+            <rect
+              x="50"
+              y="100"
+              width="20"
+              height="150"
+              fill="#a0a0a0"
+              stroke="#808080"
+              stroke-width="1"
+            />
+
+            <!-- Initial point and initial velocity vector -->
+            <circle cx="50" cy="100" r="5" fill="#3498db" />
+            <line
+              x1="50"
+              y1="100"
+              x2="68"
+              y2="74"
+              stroke="#e74c3c"
+              stroke-width="2"
+              marker-end="url(#arrowhead)"
+            />
+            <text x="75" y="70" font-size="12">v₀ = 12 m/s</text>
+            <text x="60" y="90" font-size="12" fill="#e74c3c">60°</text>
+
+            <!-- Defs for arrow -->
+            <defs>
+              <marker
+                id="arrowhead"
+                markerWidth="10"
+                markerHeight="7"
+                refX="9"
+                refY="3.5"
+                orient="auto"
+              >
+                <polygon points="0 0, 10 3.5, 0 7" fill="#e74c3c" />
+              </marker>
+            </defs>
+          </svg>
+        </div>
+
+        <div class="box success-box">
+          <h3>Какво ни е дадено:</h3>
+          <ul>
+            <li>Начална височина: h₀ = 15 m</li>
+            <li>Начална скорост: v₀ = 12 m/s</li>
+            <li>Ъгъл на изстрелване: θ = 60° спрямо хоризонтата</li>
+            <li>Ускорение на свободното падане: g = 9.81 m/s²</li>
+          </ul>
+        </div>
+
+        <div class="box warning-box">
+          <h3>Какво трябва да намерим:</h3>
+          <ol>
+            <li>
+              Максималната височина h<sub>max</sub> на топката спрямо земята
+            </li>
+            <li>Общото време на полета t</li>
+            <li>Хоризонталното разстояние s, което топката изминава</li>
+          </ol>
+        </div>
+
+        <div class="navigation-buttons">
+          <span></span>
+          <!-- Empty span to maintain space-between alignment -->
+          <button class="next-btn" data-next="concepts">
+            Към физичните концепции →
+          </button>
+        </div>
+      </div>
+
+      <!-- Page 2: Physical Concepts -->
+      <div id="concepts" class="page">
+        <h2>Физични концепции за решаване на задачата</h2>
+
+        <div class="step">
+          <h3>Тип движение</h3>
+          <p>
+            Движението на топката, хвърлена под ъгъл, е сложно движение, което
+            може да се разгледа като комбинация от две независими движения:
+          </p>
+          <div class="grid-container">
+            <div>
+              <h4>По хоризонтала (ос X):</h4>
+              <p>
+                Равномерно праволинейно движение с постоянна скорост (няма
+                ускорение по x)
+              </p>
+              <div class="formula-box">
+                <p class="formula">v<sub>x</sub> = v₀ × cos(θ) = const</p>
+                <p class="formula">x = v<sub>x</sub> × t</p>
+              </div>
+            </div>
+            <div>
+              <h4>По вертикала (ос Y):</h4>
+              <p>Равнопроменливо движение с ускорение g, насочено надолу</p>
+              <div class="formula-box">
+                <p class="formula">v<sub>y</sub> = v₀ × sin(θ) - g × t</p>
+                <p class="formula">y = h₀ + v₀ × sin(θ) × t - (g × t²)/2</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3>Разлагане на вектори</h3>
+          <p>
+            Ключова концепция тук е разлагането на вектора на началната скорост
+            на две компоненти. Това ни позволява да анализираме движението по
+            осите X и Y отделно.
+          </p>
+
+          <div class="visualization">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 400 300"
+              width="400"
+              height="300"
+              aria-labelledby="vectorsTitle"
+              role="img"
+            >
+              <title id="vectorsTitle">
+                Разлагане на вектора на скоростта на компоненти
+              </title>
+              <!-- Coordinate system -->
+              <line
+                x1="50"
+                y1="250"
+                x2="350"
+                y2="250"
+                stroke="#666"
+                stroke-width="2"
+              />
+              <line
+                x1="50"
+                y1="250"
+                x2="50"
+                y2="50"
+                stroke="#666"
+                stroke-width="2"
+              />
+              <text x="360" y="250" font-size="14">X</text>
+              <text x="50" y="40" font-size="14">Y</text>
+
+              <!-- Original vector -->
+              <line
+                x1="50"
+                y1="250"
+                x2="150"
+                y2="150"
+                stroke="#e74c3c"
+                stroke-width="3"
+                marker-end="url(#arrowhead2)"
+              />
+              <text x="110" y="145" font-size="14" fill="#e74c3c">v₀</text>
+
+              <!-- X component -->
+              <line
+                x1="50"
+                y1="250"
+                x2="150"
+                y2="250"
+                stroke="#3498db"
+                stroke-width="2"
+                stroke-dasharray="5,3"
+                marker-end="url(#arrowhead2)"
+              />
+              <text x="100" y="270" font-size="14" fill="#3498db">
+                v₀ₓ = v₀×cos(θ)
+              </text>
+
+              <!-- Y component -->
+              <line
+                x1="150"
+                y1="250"
+                x2="150"
+                y2="150"
+                stroke="#2ecc71"
+                stroke-width="2"
+                stroke-dasharray="5,3"
+                marker-end="url(#arrowhead2)"
+              />
+              <text x="160" y="200" font-size="14" fill="#2ecc71">
+                v₀ᵧ = v₀×sin(θ)
+              </text>
+
+              <!-- Angle -->
+              <path
+                d="M 80,250 A 30,30 0 0,0 50,220"
+                fill="none"
+                stroke="#e74c3c"
+                stroke-width="1"
+              />
+              <text x="75" y="230" font-size="14" fill="#e74c3c">θ</text>
+
+              <!-- Defs for arrow -->
+              <defs>
+                <marker
+                  id="arrowhead2"
+                  markerWidth="10"
+                  markerHeight="7"
+                  refX="9"
+                  refY="3.5"
+                  orient="auto"
+                >
+                  <polygon points="0 0, 10 3.5, 0 7" fill="currentColor" />
+                </marker>
+              </defs>
+            </svg>
+          </div>
+
+          <div class="formula-box">
+            <p class="formula">v₀ₓ = v₀ × cos(θ)</p>
+            <p class="formula">v₀ᵧ = v₀ × sin(θ)</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3>Важни особености при движение на тяло, хвърлено под ъгъл</h3>
+
+          <div class="key-point">
+            <p>
+              <strong>1. Максимална височина:</strong> Достига се, когато
+              вертикалната компонента на скоростта стане нула (v<sub>y</sub> =
+              0)
+            </p>
+          </div>
+
+          <div class="key-point">
+            <p>
+              <strong>2. Хоризонталната скорост:</strong> Остава постоянна през
+              целия полет (ако пренебрегнем съпротивлението на въздуха)
+            </p>
+          </div>
+
+          <div class="key-point">
+            <p>
+              <strong>3. Траекторията:</strong> Парабола (в реален случай е
+              по-сложна поради съпротивлението на въздуха)
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-container">
+          <div class="box info-box">
+            <h3>Формули за максимална височина</h3>
+            <p>За тяло, хвърлено под ъгъл:</p>
+            <p class="formula">t<sub>max</sub> = v₀ᵧ / g</p>
+            <p class="formula">
+              h<sub>max</sub> = h₀ +
+              <span class="frac"
+                ><span class="frac-top">v₀ᵧ²</span
+                ><span class="frac-bottom">2g</span></span
+              >
+            </p>
+          </div>
+
+          <div class="box info-box">
+            <h3>Формули за време на полет</h3>
+            <p>При падане от начална височина h₀:</p>
+            <p class="formula">0 = h₀ + v₀ᵧ × t - (g × t²)/2</p>
+            <p>Това е квадратно уравнение, което трябва да се реши за t.</p>
+          </div>
+        </div>
+
+        <div class="navigation-buttons">
+          <button class="prev-btn" data-prev="task">← Към условието</button>
+          <button class="next-btn" data-next="solution-1">
+            Към решението →
+          </button>
+        </div>
+      </div>
+
+      <!-- Page 3: Solution Part 1 -->
+      <div id="solution-1" class="page">
+        <h2>Решение - Част 1: Подготовка и начални изчисления</h2>
+
+        <div class="step">
+          <h3>Стъпка 1: Определяне на компонентите на началната скорост</h3>
+          <p>
+            Разлагаме началната скорост v₀ = 12 m/s на компоненти по осите x и
+            y:
+          </p>
+
+          <div class="formula-box">
+            <p class="formula">
+              v₀ₓ = v₀ × cos(θ) = 12 m/s × cos(60°) = 12 m/s × 0.5 = 6 m/s
+            </p>
+            <p class="formula">
+              v₀ᵧ = v₀ × sin(θ) = 12 m/s × sin(60°) = 12 m/s × 0.866 = 10.392
+              m/s
+            </p>
+          </div>
+
+          <div class="key-point">
+            <p>
+              <strong>Важно:</strong> Хоризонталната компонента на скоростта
+              (v₀ₓ) остава постоянна през цялото движение, докато вертикалната
+              компонента (v₀ᵧ) се променя под действието на гравитацията.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3>Стъпка 2: Записваме уравненията на движението</h3>
+          <p>За хоризонталното движение (по ос x):</p>
+          <div class="formula-box">
+            <p class="formula">x(t) = v₀ₓ × t = 6 × t [m]</p>
+          </div>
+
+          <p>
+            За вертикалното движение (по ос y) с начална височина h₀ = 15 m:
+          </p>
+          <div class="formula-box">
+            <p class="formula">
+              y(t) = 15 + 10.392 × t -
+              <span class="frac"
+                ><span class="frac-top">g × t²</span
+                ><span class="frac-bottom">2</span></span
+              >
+              = 15 + 10.392 × t -
+              <span class="frac"
+                ><span class="frac-top">4.905 × t²</span
+                ><span class="frac-bottom">2</span></span
+              >
+              [m]
+            </p>
+          </div>
+
+          <div class="box info-box">
+            <p>Забележка: стойността 4.905 идва от g/2 = 9.81/2 = 4.905</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3>Стъпка 3: Определяне на максималната височина</h3>
+          <p>
+            Максималната височина се достига, когато вертикалната компонента на
+            скоростта стане нула:
+          </p>
+
+          <div class="formula-box">
+            <p class="formula">v<sub>y</sub>(t) = v₀ᵧ - g × t</p>
+            <p class="formula">v<sub>y</sub>(t<sub>max</sub>) = 0</p>
+            <p class="formula">0 = 10.392 - 9.81 × t<sub>max</sub></p>
+            <p class="formula">9.81 × t<sub>max</sub> = 10.392</p>
+            <p class="formula">t<sub>max</sub> = 10.392 / 9.81 = 1.059 s</p>
+          </div>
+
+          <p>
+            Сега изчисляваме максималната височина, като заместваме t<sub
+              >max</sub
+            >
+            в уравнението за y(t):
+          </p>
+
+          <div class="formula-box">
+            <p class="formula">
+              h<sub>max</sub> = y(t<sub>max</sub>) = 15 + 10.392 × 1.059 - 4.905
+              × 1.059²
+            </p>
+            <p class="formula">
+              h<sub>max</sub> = 15 + 11.005 - 5.496 = 20.509 ≈ 20.51 m
+            </p>
+          </div>
+
+          <div class="result">
+            <p>Максималната височина на топката спрямо земята е 20.51 m.</p>
+          </div>
+
+          <div class="key-point">
+            <p>
+              <strong>Физичен смисъл:</strong> Максималната височина е сума от
+              началната височина (15 m) и допълнителната височина, достигната
+              благодарение на вертикалната компонента на началната скорост
+              (около 5.51 m).
+            </p>
+          </div>
+        </div>
+
+        <div class="box warning-box">
+          <h3>Проверка чрез алтернативна формула</h3>
+          <p>
+            Можем да проверим резултата, използвайки директната формула за
+            максимална височина:
+          </p>
+          <div class="formula-box">
+            <p class="formula">
+              h<sub>max</sub> = h₀ +
+              <span class="frac"
+                ><span class="frac-top">v₀ᵧ²</span
+                ><span class="frac-bottom">2g</span></span
+              >
+              = 15 +
+              <span class="frac"
+                ><span class="frac-top">10.392²</span
+                ><span class="frac-bottom">2 × 9.81</span></span
+              >
+              = 15 + 5.509 = 20.509 m
+            </p>
+          </div>
+          <p>
+            Резултатите съвпадат, което потвърждава верността на изчисленията.
+          </p>
+        </div>
+
+        <div class="navigation-buttons">
+          <button class="prev-btn" data-prev="concepts">
+            ← Към концепциите
+          </button>
+          <button class="next-btn" data-next="solution-2">
+            Към втората част от решението →
+          </button>
+        </div>
+      </div>
+
+      <!-- Page 4: Solution Part 2 -->
+      <div id="solution-2" class="page">
+        <h2>Решение - Част 2: Време на полета и хоризонтално разстояние</h2>
+
+        <div class="step">
+          <h3>Стъпка 4: Определяне на общото време на полета</h3>
+          <p>
+            За да намерим общото време на полета, трябва да определим кога
+            топката ще достигне земята, т.е. кога y(t) = 0:
+          </p>
+
+          <div class="formula-box">
+            <p class="formula">y(t) = 15 + 10.392 × t - 4.905 × t² = 0</p>
+            <p class="formula">4.905 × t² - 10.392 × t - 15 = 0</p>
+          </div>
+
+          <p>Това е квадратно уравнение от вида at² + bt + c = 0, където:</p>
+          <ul>
+            <li>a = 4.905</li>
+            <li>b = -10.392</li>
+            <li>c = -15</li>
+          </ul>
+
+          <p>Използваме формулата за решаване на квадратно уравнение:</p>
+
+          <div class="formula-box">
+            <p class="formula">t = (-b ± √(b² - 4ac)) / (2a)</p>
+            <p class="formula">
+              t =
+              <span class="frac"
+                ><span class="frac-top"
+                  >10.392 ± √(10.392² - 4 × 4.905 × (-15))</span
+                ><span class="frac-bottom">2 × 4.905</span></span
+              >
+            </p>
+            <p class="formula">
+              t =
+              <span class="frac"
+                ><span class="frac-top">10.392 ± √(108.095 + 294.3)</span
+                ><span class="frac-bottom">9.81</span></span
+              >
+            </p>
+            <p class="formula">
+              t =
+              <span class="frac"
+                ><span class="frac-top">10.392 ± √402.395</span
+                ><span class="frac-bottom">9.81</span></span
+              >
+            </p>
+            <p class="formula">
+              t =
+              <span class="frac"
+                ><span class="frac-top">10.392 ± 20.06</span
+                ><span class="frac-bottom">9.81</span></span
+              >
+            </p>
+          </div>
+
+          <p>Получаваме две решения:</p>
+          <div class="formula-box">
+            <p class="formula">
+              t₁ = (10.392 + 20.06) / 9.81 = 30.452 / 9.81 = 3.10 s
+            </p>
+            <p class="formula">
+              t₂ = (10.392 - 20.06) / 9.81 = -9.668 / 9.81 = -0.99 s
+            </p>
+          </div>
+
+          <div class="box warning-box">
+            <p>
+              Получихме две решения на квадратното уравнение: t₁ = 3.10 s и t₂ =
+              -0.99 s.
+            </p>
+            <p>
+              Тъй като отрицателно време няма физически смисъл в контекста на
+              нашата задача (то би съответствало на момент преди изстрелването),
+              приемаме само положителното решение.
+            </p>
+          </div>
+
+          <div class="result">
+            <p>Общото време на полета е 3.10 s.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3>Стъпка 5: Определяне на хоризонталното разстояние</h3>
+          <p>
+            Хоризонталното разстояние, което топката изминава, се определя от
+            уравнението за x(t), като заместим с общото време на полета:
+          </p>
+
+          <div class="formula-box">
+            <p class="formula">x(t) = v₀ₓ × t = 6 × 3.10 = 18.60 m</p>
+          </div>
+
+          <div class="result">
+            <p>Хоризонталното разстояние, което топката изминава, е 18.60 m.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3>Обобщение на решението</h3>
+          <div class="grid-container">
+            <div class="box success-box">
+              <h4>Какво намерихме:</h4>
+              <ol>
+                <li>Максимална височина: h<sub>max</sub> = 20.51 m</li>
+                <li>Общо време на полета: t = 3.10 s</li>
+                <li>Хоризонтално разстояние: s = 18.60 m</li>
+              </ol>
+            </div>
+
+            <div class="box info-box">
+              <h4>Ключови стъпки:</h4>
+              <ol>
+                <li>Разложихме началната скорост на компоненти</li>
+                <li>Записахме уравненията за движение по x и y</li>
+                <li>Намерихме времето и височината в най-високата точка</li>
+                <li>Решихме квадратно уравнение за времето на полета</li>
+                <li>Изчислихме хоризонталното разстояние</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <div class="navigation-buttons">
+          <button class="prev-btn" data-prev="solution-1">
+            ← Към първата част
+          </button>
+          <button class="next-btn" data-next="visualization">
+            Към визуализацията →
+          </button>
+        </div>
+      </div>
+
+      <!-- Page 5: Visualization -->
+      <div id="visualization" class="page">
+        <h2>Визуализация на траекторията</h2>
+
+        <div class="visualization">
+          <svg
+            id="trajectory-svg"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 600 300"
+            width="600"
+            height="300"
+            aria-labelledby="trajectoryTitle"
+            role="img"
+          >
+            <title id="trajectoryTitle">
+              Траектория на топката с ключови точки
+            </title>
+            <!-- Coordinate system -->
+            <line
+              x1="50"
+              y1="250"
+              x2="550"
+              y2="250"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <line
+              x1="50"
+              y1="250"
+              x2="50"
+              y2="30"
+              stroke="#666"
+              stroke-width="2"
+            />
+
+            <!-- X-axis ticks -->
+            <line
+              x1="50"
+              y1="255"
+              x2="50"
+              y2="245"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="50" y="270" text-anchor="middle" font-size="12">0</text>
+
+            <line
+              x1="144"
+              y1="255"
+              x2="144"
+              y2="245"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="144" y="270" text-anchor="middle" font-size="12">5</text>
+
+            <line
+              x1="238"
+              y1="255"
+              x2="238"
+              y2="245"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="238" y="270" text-anchor="middle" font-size="12">10</text>
+
+            <line
+              x1="332"
+              y1="255"
+              x2="332"
+              y2="245"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="332" y="270" text-anchor="middle" font-size="12">15</text>
+
+            <line
+              x1="426"
+              y1="255"
+              x2="426"
+              y2="245"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="426" y="270" text-anchor="middle" font-size="12">20</text>
+
+            <line
+              x1="520"
+              y1="255"
+              x2="520"
+              y2="245"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="520" y="270" text-anchor="middle" font-size="12">25</text>
+
+            <!-- Y-axis ticks -->
+            <line
+              x1="45"
+              y1="250"
+              x2="55"
+              y2="250"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="35" y="254" text-anchor="end" font-size="12">0</text>
+
+            <line
+              x1="45"
+              y1="210"
+              x2="55"
+              y2="210"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="35" y="214" text-anchor="end" font-size="12">5</text>
+
+            <line
+              x1="45"
+              y1="170"
+              x2="55"
+              y2="170"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="35" y="174" text-anchor="end" font-size="12">10</text>
+
+            <line
+              x1="45"
+              y1="130"
+              x2="55"
+              y2="130"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="35" y="134" text-anchor="end" font-size="12">15</text>
+
+            <line
+              x1="45"
+              y1="90"
+              x2="55"
+              y2="90"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="35" y="94" text-anchor="end" font-size="12">20</text>
+
+            <line
+              x1="45"
+              y1="50"
+              x2="55"
+              y2="50"
+              stroke="#666"
+              stroke-width="2"
+            />
+            <text x="35" y="54" text-anchor="end" font-size="12">25</text>
+
+            <!-- Labels -->
+            <text x="575" y="270" font-size="12">x (m)</text>
+            <text x="35" y="30" font-size="12">y (m)</text>
+
+            <!-- Building/roof -->
+            <rect
+              x="50"
+              y="130"
+              width="15"
+              height="120"
+              fill="#a0a0a0"
+              stroke="#808080"
+              stroke-width="1"
+            />
+
+            <!-- Initial point -->
+            <circle cx="50" cy="130" r="5" fill="#3498db" />
+            <text x="35" y="120" text-anchor="end" font-size="10">
+              (0, 15m)
+            </text>
+
+            <!-- Vector of initial velocity -->
+            <line
+              x1="50"
+              y1="130"
+              x2="68"
+              y2="104"
+              stroke="#e74c3c"
+              stroke-width="2"
+              marker-end="url(#arrowhead3)"
+            />
+            <text x="75" y="105" font-size="10">v₀ = 12 m/s</text>
+            <text x="60" y="115" font-size="10" fill="#e74c3c">60°</text>
+
+            <!-- Highest point -->
+            <circle cx="167" cy="79" r="5" fill="#e74c3c" />
+            <text x="167" y="65" text-anchor="middle" font-size="10">
+              h_max = 20.51m
+            </text>
+            <line
+              x1="167"
+              y1="79"
+              x2="167"
+              y2="250"
+              stroke="#e74c3c"
+              stroke-width="1"
+              stroke-dasharray="5,3"
+            />
+
+            <!-- Landing point -->
+            <circle cx="363" cy="250" r="5" fill="#3498db" />
+            <text x="363" y="240" text-anchor="middle" font-size="10">
+              (18.60m, 0)
+            </text>
+
+            <!-- Time annotation -->
+            <text x="260" y="40" font-size="12" font-weight="bold">
+              Време на полета: 3.10 s
+            </text>
+
+            <!-- Arrow marker definition -->
+            <defs>
+              <marker
+                id="arrowhead3"
+                markerWidth="10"
+                markerHeight="7"
+                refX="9"
+                refY="3.5"
+                orient="auto"
+              >
+                <polygon points="0 0, 10 3.5, 0 7" fill="#e74c3c" />
+              </marker>
+            </defs>
+
+            <!-- Ball -->
+            <circle id="ball" cx="50" cy="130" r="8" fill="#3498db" />
+
+            <!-- Trajectory curve -->
+            <path
+              id="trajectory-path"
+              fill="none"
+              stroke="#3498db"
+              stroke-width="2"
+              stroke-dasharray="5,3"
+            />
+          </svg>
+        </div>
+
+        <div class="interactive-controls">
+          <h3>Управление на анимацията</h3>
+          <button id="animate-btn">Стартирай анимацията</button>
+          <button id="reset-btn">Нулиране</button>
+        </div>
+
+        <div class="box info-box">
+          <h3>Важни моменти от движението:</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Момент</th>
+                <th>Време (s)</th>
+                <th>Височина (m)</th>
+                <th>Разстояние (m)</th>
+                <th>Описание</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Начало</td>
+                <td>0</td>
+                <td>15</td>
+                <td>0</td>
+                <td>Топката се изстрелва от покрива</td>
+              </tr>
+              <tr>
+                <td>Най-висока точка</td>
+                <td>1.06</td>
+                <td>20.51</td>
+                <td>6.36</td>
+                <td>Вертикалната скорост е 0, топката спира да се изкачва</td>
+              </tr>
+              <tr>
+                <td>Край на полета</td>
+                <td>3.10</td>
+                <td>0</td>
+                <td>18.60</td>
+                <td>Топката достига земята</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="navigation-buttons">
+          <button class="prev-btn" data-prev="solution-2">
+            ← Към решението
+          </button>
+          <button class="next-btn" data-next="graphs">Към графиките →</button>
+        </div>
+      </div>
+
+      <!-- Page 6: Graphs -->
+      <div id="graphs" class="page">
+        <h2>Графики на движението</h2>
+
+        <p>
+          Движението на топката може да се анализира чрез следните графики,
+          които показват как се променят различните параметри във времето.
+        </p>
+
+        <div class="grid-container">
+          <div>
+            <h3>Зависимост на височината от времето y(t)</h3>
+            <div class="graph-container">
+              <div id="height-time-loading" class="chart-loading">
+                <div class="loader"></div>
+              </div>
+              <canvas id="height-time-chart"></canvas>
+            </div>
+            <div class="box info-box">
+              <p>
+                Графиката има параболична форма с максимум при t = 1.06 s,
+                когато топката достига максималната си височина от 20.51 m.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h3>Зависимост на хоризонталната позиция от времето x(t)</h3>
+            <div class="graph-container">
+              <div id="distance-time-loading" class="chart-loading">
+                <div class="loader"></div>
+              </div>
+              <canvas id="distance-time-chart"></canvas>
+            </div>
+            <div class="box info-box">
+              <p>
+                Графиката е линейна, тъй като хоризонталната скорост е постоянна
+                през целия полет.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-container">
+          <div>
+            <h3>
+              Зависимост на вертикалната скорост от времето v<sub>y</sub>(t)
+            </h3>
+            <div class="graph-container">
+              <div id="vy-time-loading" class="chart-loading">
+                <div class="loader"></div>
+              </div>
+              <canvas id="vy-time-chart"></canvas>
+            </div>
+            <div class="box info-box">
+              <p>
+                Графиката е линейна и намаляваща поради постоянното ускорение g,
+                насочено надолу. При t = 1.06 s вертикалната скорост става нула.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h3>Траектория на топката y(x)</h3>
+            <div class="graph-container">
+              <div id="trajectory-loading" class="chart-loading">
+                <div class="loader"></div>
+              </div>
+              <canvas id="trajectory-chart"></canvas>
+            </div>
+            <div class="box info-box">
+              <p>
+                Графиката показва параболична траектория на топката в
+                пространството.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="navigation-buttons">
+          <button class="prev-btn" data-prev="visualization">
+            ← Към визуализацията
+          </button>
+          <button class="next-btn" data-next="tips">
+            Към методическите насоки →
+          </button>
+        </div>
+      </div>
+
+      <!-- Page 7: Tips -->
+      <div id="tips" class="page">
+        <h2>Методически насоки за решаване на подобни задачи</h2>
+
+        <div class="step">
+          <h3>1. Анализирайте задачата</h3>
+          <ul>
+            <li>
+              Идентифицирайте всички дадени величини и какво трябва да се намери
+            </li>
+            <li>Определете координатната система и началото на отчитане</li>
+            <li>Помислете кои физични закони са приложими</li>
+          </ul>
+        </div>
+
+        <div class="step">
+          <h3>2. Разлагане на движението</h3>
+          <ul>
+            <li>Винаги разделяйте движението на компоненти по x и y</li>
+            <li>Разложете началната скорост на компоненти</li>
+            <li>Запишете уравненията на движение поотделно за всяка ос</li>
+          </ul>
+
+          <div class="key-point">
+            <p>
+              <strong>Съвет:</strong> При движение на тяло, хвърлено под ъгъл,
+              хоризонталното движение е равномерно, а вертикалното -
+              равнопроменливо.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3>3. Стратегия за намиране на максимална височина</h3>
+          <ul>
+            <li>
+              При максимална височина вертикалната компонента на скоростта е
+              нула
+            </li>
+            <li>
+              Използвайте уравнението v<sub>y</sub>(t) = v₀ᵧ - g × t = 0, за да
+              намерите времето t<sub>max</sub>
+            </li>
+            <li>
+              Заместете t<sub>max</sub> в уравнението за y(t), за да намерите
+              h<sub>max</sub>
+            </li>
+            <li>
+              Алтернативно, използвайте директната формула h<sub>max</sub> = h₀
+              + v₀ᵧ² / (2g)
+            </li>
+          </ul>
+        </div>
+
+        <div class="step">
+          <h3>4. Намиране на общото време на полета</h3>
+          <ul>
+            <li>
+              Запишете уравнението за позицията по вертикала y(t) = h₀ + v₀ᵧ × t
+              - (g × t²)/2
+            </li>
+            <li>Намерете момента, когато y(t) = 0 (топката достига земята)</li>
+            <li>Това води до квадратно уравнение, което трябва да решите</li>
+            <li>Изберете физически смисленото решение (положително време)</li>
+          </ul>
+        </div>
+
+        <div class="step">
+          <h3>5. Определяне на хоризонталното разстояние</h3>
+          <ul>
+            <li>
+              След като намерите общото време на полета, използвайте уравнението
+              за хоризонтално движение: x(t) = v₀ₓ × t
+            </li>
+            <li>
+              Заместете общото време и изчислете хоризонталното разстояние
+            </li>
+          </ul>
+        </div>
+
+        <div class="box success-box">
+          <h3>Обобщение на подхода</h3>
+          <ol>
+            <li>Разложете векторите на компоненти</li>
+            <li>Запишете уравненията на движение по x и y</li>
+            <li>Намерете времето на достигане на максимална височина</li>
+            <li>Изчислете максималната височина</li>
+            <li>Решете квадратно уравнение за общото време на полета</li>
+            <li>Изчислете хоризонталното разстояние</li>
+          </ol>
+        </div>
+
+        <div class="box warning-box">
+          <h3>Чести грешки, които трябва да избягвате</h3>
+          <ul>
+            <li>Забравяне да се вземе предвид началната височина</li>
+            <li>Грешки при разлагането на вектори (объркване на sin и cos)</li>
+            <li>
+              Объркване на посоките (знаците) при съставяне на уравненията
+            </li>
+            <li>Грешки при решаване на квадратното уравнение</li>
+            <li>
+              Избиране на физически безсмисленото решение на квадратното
+              уравнение
+            </li>
+          </ul>
+        </div>
+
+        <div class="navigation-buttons">
+          <button class="prev-btn" data-prev="graphs">← Към графиките</button>
+          <button class="next-btn" data-next="task">Към началото →</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>
+        © 2025 Физическа задача: Траектория на топка | Подробно решение с
+        обяснения и визуализации
+      </p>
+    </footer>
+
+    <script>
+      // Проверка дали Chart вече е зареден
+      if (typeof Chart === "undefined") {
+        // Ръчно зареждане на Chart.js библиотеката
+        document.write(
+          '<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"><\/script>'
+        );
+      }
+    </script>
+
+    <!-- Резервен вариант, ако горното не сработи -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"
+      integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <!-- Particles container -->
+    <div class="particles" id="particles"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Create background particles
+        createParticles();
+
+        // Global variables
+        const initialPosition = { x: 50, y: 130 };
+        let charts = {};
+        let animationId = null;
+        let chartsInitialized = false;
+
+        // Create floating particles in the background
+        function createParticles() {
+          const particlesContainer = document.getElementById("particles");
+          if (!particlesContainer) return;
+
+          const numParticles = 20;
+
+          for (let i = 0; i < numParticles; i++) {
+            createParticle(particlesContainer);
+          }
+        }
+
+        function createParticle(container) {
+          const particle = document.createElement("div");
+          particle.className = "particle";
+
+          // Random size between 5 and 20 pixels
+          const size = Math.random() * 15 + 5;
+          particle.style.width = `${size}px`;
+          particle.style.height = `${size}px`;
+
+          // Random position
+          const posX = Math.random() * 100;
+          const posY = Math.random() * 100;
+          particle.style.left = `${posX}%`;
+          particle.style.top = `${posY}%`;
+
+          // Random opacity
+          particle.style.opacity = Math.random() * 0.2 + 0.1;
+
+          // Random color from our palette
+          const colors = [
+            "rgba(245, 167, 161, 0.6)", // primary color
+            "rgba(152, 216, 200, 0.6)", // secondary color
+            "rgba(255, 136, 130, 0.6)", // accent color
+            "rgba(91, 108, 151, 0.4)", // dark color
+          ];
+          const randomColor = colors[Math.floor(Math.random() * colors.length)];
+          particle.style.background = randomColor;
+
+          // Add to container
+          container.appendChild(particle);
+
+          // Start floating animation
+          animateParticle(particle);
+        }
+
+        function animateParticle(particle) {
+          // Initial position
+          const startX = parseFloat(particle.style.left);
+          const startY = parseFloat(particle.style.top);
+
+          // Random movement range
+          const rangeX = Math.random() * 10 + 5;
+          const rangeY = Math.random() * 10 + 5;
+
+          // Random duration between 10 and 30 seconds
+          const duration = Math.random() * 20000 + 10000;
+          const startTime = Date.now();
+
+          function updatePosition() {
+            const elapsed = Date.now() - startTime;
+            const progress = (elapsed % duration) / duration;
+
+            // Sine wave movement
+            const x = startX + Math.sin(progress * Math.PI * 2) * rangeX;
+            const y =
+              startY + Math.sin(progress * Math.PI * 2 + Math.PI / 2) * rangeY;
+
+            particle.style.left = `${x}%`;
+            particle.style.top = `${y}%`;
+
+            requestAnimationFrame(updatePosition);
+          }
+
+          requestAnimationFrame(updatePosition);
+        }
+
+        // Tab functionality
+        const tabLinks = document.querySelectorAll(".tab-link");
+        const pages = document.querySelectorAll(".page");
+
+        // Tab navigation
+        tabLinks.forEach((link) => {
+          link.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            const targetTabId = this.getAttribute("data-tab");
+
+            // Deactivate all tabs and pages
+            tabLinks.forEach((l) => l.classList.remove("active"));
+            pages.forEach((p) => p.classList.remove("active"));
+
+            // Activate the clicked tab and corresponding page
+            this.classList.add("active");
+            document.getElementById(targetTabId).classList.add("active");
+
+            // If navigating to graphs page, initialize charts if not done already
+            if (targetTabId === "graphs" && !chartsInitialized) {
+              initializeCharts();
+            }
+
+            // If navigating to visualization page, initialize trajectory
+            if (targetTabId === "visualization") {
+              // Small timeout to ensure the page is visible
+              setTimeout(() => {
+                drawTrajectory();
+              }, 100);
+            }
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+          });
+        });
+
+        // Next/Prev button functionality
+        const nextButtons = document.querySelectorAll(".next-btn");
+        nextButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            const nextTabId = this.getAttribute("data-next");
+
+            // Simulate click on the tab
+            document
+              .querySelector(`.tab-link[data-tab="${nextTabId}"]`)
+              .click();
+          });
+        });
+
+        const prevButtons = document.querySelectorAll(".prev-btn");
+        prevButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            const prevTabId = this.getAttribute("data-prev");
+
+            // Simulate click on the tab
+            document
+              .querySelector(`.tab-link[data-tab="${prevTabId}"]`)
+              .click();
+          });
+        });
+
+        // Physics calculation functions
+        function calculatePosition(t) {
+          // Initial conditions
+          const h0 = 15; // Initial height (m)
+          const v0 = 12; // Initial velocity (m/s)
+          const theta = (60 * Math.PI) / 180; // Angle in radians
+          const g = 9.81; // Gravity (m/s²)
+
+          // Components of velocity
+          const v0x = v0 * Math.cos(theta);
+          const v0y = v0 * Math.sin(theta);
+
+          // Position at time t
+          const x = v0x * t;
+          const y = h0 + v0y * t - 0.5 * g * t * t;
+
+          return { x, y };
+        }
+
+        function calculateVelocityY(t) {
+          const v0 = 12;
+          const theta = (60 * Math.PI) / 180;
+          const g = 9.81;
+          const v0y = v0 * Math.sin(theta);
+
+          return v0y - g * t;
+        }
+
+        function calculateTrajectory() {
+          // Total time of flight (calculated in solution)
+          const totalTime = 3.1;
+
+          // Generate trajectory points
+          const points = [];
+          for (let t = 0; t <= totalTime; t += 0.05) {
+            points.push(calculatePosition(t));
+          }
+
+          return points;
+        }
+
+        // SVG visualization functions
+        function drawTrajectory() {
+          const trajectoryPath = document.getElementById("trajectory-path");
+          if (!trajectoryPath) return;
+
+          const trajectory = calculateTrajectory();
+
+          // SVG viewport scale factors
+          const xScale = 19;
+          const yScale = 4;
+
+          // Create path data
+          let pathData = `M ${initialPosition.x} ${initialPosition.y}`;
+
+          trajectory.forEach((point) => {
+            const svgX = initialPosition.x + point.x * xScale;
+            const svgY = initialPosition.y - point.y * yScale + h0Scale;
+            pathData += ` L ${svgX} ${svgY}`;
+          });
+
+          // Set the path
+          trajectoryPath.setAttribute("d", pathData);
+        }
+
+        // Calculate an offset for y to match the initial height
+        const h0 = 15;
+        const h0Scale = 4 * h0; // 4 is the yScale from earlier
+
+        // Animation functions
+        const animateBtn = document.getElementById("animate-btn");
+        const resetBtn = document.getElementById("reset-btn");
+
+        if (animateBtn && resetBtn) {
+          animateBtn.addEventListener("click", startAnimation);
+          resetBtn.addEventListener("click", resetAnimation);
+        }
+
+        function startAnimation() {
+          const ball = document.getElementById("ball");
+          if (!ball) return;
+
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+          }
+
+          // Disable animate button during animation
+          if (animateBtn) {
+            animateBtn.disabled = true;
+          }
+
+          let startTime = null;
+          const duration = 3000; // 3 seconds animation
+
+          function animate(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // Calculate the current time in the physics simulation
+            const currentTime = progress * 3.1; // Scale to actual flight time
+
+            // Calculate position
+            const position = calculatePosition(currentTime);
+
+            // SVG viewport scale factors
+            const xScale = 19;
+            const yScale = 4;
+
+            // Update ball position
+            const svgX = initialPosition.x + position.x * xScale;
+            const svgY = initialPosition.y - position.y * yScale + h0Scale;
+
+            ball.setAttribute("cx", svgX);
+            ball.setAttribute("cy", svgY);
+
+            if (progress < 1) {
+              animationId = requestAnimationFrame(animate);
+            } else {
+              // Re-enable button when animation completes
+              if (animateBtn) {
+                animateBtn.disabled = false;
+              }
+            }
+          }
+
+          animationId = requestAnimationFrame(animate);
+        }
+
+        function resetAnimation() {
+          const ball = document.getElementById("ball");
+          if (!ball) return;
+
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+          }
+
+          // Re-enable animate button
+          if (animateBtn) {
+            animateBtn.disabled = false;
+          }
+
+          ball.setAttribute("cx", initialPosition.x);
+          ball.setAttribute("cy", initialPosition.y);
+        }
+
+        // Chart functions
+        function initializeCharts() {
+          if (chartsInitialized) return;
+
+          // Проверка дали Chart е дефиниран
+          if (typeof Chart === "undefined") {
+            console.error("Chart.js библиотеката не е заредена!");
+
+            // Скриваме индикаторите за зареждане
+            document.querySelectorAll(".chart-loading").forEach((el) => {
+              el.innerHTML =
+                '<p style="color:red">Грешка при зареждане на графиките. Моля, опитайте да презаредите страницата.</p>';
+            });
+
+            return;
+          }
+
+          // Generate data points
+          const timePoints = [];
+          const heightPoints = [];
+          const distancePoints = [];
+          const vyPoints = [];
+          const trajectoryPoints = [];
+
+          for (let t = 0; t <= 3.1; t += 0.1) {
+            const position = calculatePosition(t);
+            timePoints.push(t.toFixed(1));
+            heightPoints.push(position.y);
+            distancePoints.push(position.x);
+
+            // Calculate vertical velocity
+            const vy = calculateVelocityY(t);
+            vyPoints.push(vy);
+
+            trajectoryPoints.push({
+              x: position.x,
+              y: position.y,
+            });
+          }
+
+          // Common chart options
+          const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+              duration: 2000,
+              easing: "easeOutCubic",
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  font: {
+                    family:
+                      "'Quicksand', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                    size: 13,
+                  },
+                  padding: 15,
+                  boxWidth: 15,
+                  usePointStyle: true,
+                },
+              },
+              tooltip: {
+                backgroundColor: "rgba(91, 108, 151, 0.85)",
+                titleFont: {
+                  family: "'Comfortaa', cursive",
+                  size: 15,
+                  weight: "bold",
+                },
+                bodyFont: {
+                  family: "'Quicksand', sans-serif",
+                  size: 14,
+                },
+                padding: 12,
+                cornerRadius: 10,
+                boxPadding: 5,
+                displayColors: true,
+                borderColor: "rgba(255,255,255,0.2)",
+                borderWidth: 1,
+                caretSize: 8,
+                caretPadding: 10,
+                callbacks: {
+                  label: function (context) {
+                    let label = context.dataset.label || "";
+                    if (label) {
+                      label += ": ";
+                    }
+                    if (context.parsed.y !== null) {
+                      label += context.parsed.y.toFixed(2);
+                    }
+                    return " " + label;
+                  },
+                },
+              },
+            },
+          };
+
+          // Height vs Time Chart
+          const heightTimeCtx = document.getElementById("height-time-chart");
+          if (heightTimeCtx) {
+            charts.heightTime = new Chart(heightTimeCtx, {
+              type: "line",
+              data: {
+                labels: timePoints,
+                datasets: [
+                  {
+                    label: "Височина (m)",
+                    data: heightPoints,
+                    borderColor: "rgba(74, 144, 226, 1)",
+                    backgroundColor: "rgba(74, 144, 226, 0.2)",
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    pointBackgroundColor: "white",
+                    pointBorderColor: "rgba(74, 144, 226, 1)",
+                    pointBorderWidth: 2,
+                  },
+                ],
+              },
+              options: {
+                ...commonOptions,
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    title: {
+                      display: true,
+                      text: "Височина (m)",
+                      font: {
+                        weight: "bold",
+                      },
+                    },
+                  },
+                  x: {
+                    title: {
+                      display: true,
+                      text: "Време (s)",
+                      font: {
+                        weight: "bold",
+                      },
+                    },
+                  },
+                },
+              },
+            });
+
+            // Hide loading indicator
+            const loadingIndicator = document.getElementById(
+              "height-time-loading"
+            );
+            if (loadingIndicator) {
+              loadingIndicator.style.display = "none";
+            }
+          }
+
+          // Distance vs Time Chart
+          const distanceTimeCtx = document.getElementById(
+            "distance-time-chart"
+          );
+          if (distanceTimeCtx) {
+            charts.distanceTime = new Chart(distanceTimeCtx, {
+              type: "line",
+              data: {
+                labels: timePoints,
+                datasets: [
+                  {
+                    label: "Разстояние (m)",
+                    data: distancePoints,
+                    borderColor: "rgba(80, 200, 120, 1)",
+                    backgroundColor: "rgba(80, 200, 120, 0.2)",
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.2,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    pointBackgroundColor: "white",
+                    pointBorderColor: "rgba(80, 200, 120, 1)",
+                    pointBorderWidth: 2,
+                  },
+                ],
+              },
+              options: {
+                ...commonOptions,
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    title: {
+                      display: true,
+                      text: "Разстояние (m)",
+                      font: {
+                        weight: "bold",
+                      },
+                    },
+                  },
+                  x: {
+                    title: {
+                      display: true,
+                      text: "Време (s)",
+                      font: {
+                        weight: "bold",
+                      },
+                    },
+                  },
+                },
+              },
+            });
+
+            // Hide loading indicator
+            const loadingIndicator = document.getElementById(
+              "distance-time-loading"
+            );
+            if (loadingIndicator) {
+              loadingIndicator.style.display = "none";
+            }
+          }
+
+          // Vertical Velocity vs Time Chart
+          const vyTimeCtx = document.getElementById("vy-time-chart");
+          if (vyTimeCtx) {
+            charts.vyTime = new Chart(vyTimeCtx, {
+              type: "line",
+              data: {
+                labels: timePoints,
+                datasets: [
+                  {
+                    label: "Вертикална скорост (m/s)",
+                    data: vyPoints,
+                    borderColor: "rgba(240, 118, 86, 1)",
+                    backgroundColor: "rgba(240, 118, 86, 0.2)",
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.2,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    pointBackgroundColor: "white",
+                    pointBorderColor: "rgba(240, 118, 86, 1)",
+                    pointBorderWidth: 2,
+                    borderDash: [0],
+                    borderCapStyle: "round",
+                  },
+                ],
+              },
+              options: {
+                ...commonOptions,
+                scales: {
+                  y: {
+                    title: {
+                      display: true,
+                      text: "Вертикална скорост (m/s)",
+                      font: {
+                        weight: "bold",
+                      },
+                    },
+                  },
+                  x: {
+                    title: {
+                      display: true,
+                      text: "Време (s)",
+                      font: {
+                        weight: "bold",
+                      },
+                    },
+                  },
+                },
+              },
+            });
+
+            // Hide loading indicator
+            const loadingIndicator = document.getElementById("vy-time-loading");
+            if (loadingIndicator) {
+              loadingIndicator.style.display = "none";
+            }
+          }
+
+          // Trajectory Chart
+          const trajectoryCtx = document.getElementById("trajectory-chart");
+          if (trajectoryCtx) {
+            charts.trajectory = new Chart(trajectoryCtx, {
+              type: "scatter",
+              data: {
+                datasets: [
+                  {
+                    label: "Траектория",
+                    data: trajectoryPoints,
+                    borderColor: "rgba(54, 72, 107, 1)",
+                    backgroundColor: "rgba(54, 72, 107, 0.6)",
+                    pointRadius: 6,
+                    pointHoverRadius: 10,
+                    pointStyle: "circle",
+                    showLine: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                  },
+                ],
+              },
+              options: {
+                ...commonOptions,
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    title: {
+                      display: true,
+                      text: "Височина (m)",
+                      font: {
+                        weight: "bold",
+                      },
+                    },
+                  },
+                  x: {
+                    beginAtZero: true,
+                    title: {
+                      display: true,
+                      text: "Хоризонтално разстояние (m)",
+                      font: {
+                        weight: "bold",
+                      },
+                    },
+                  },
+                },
+              },
+            });
+
+            // Hide loading indicator
+            const loadingIndicator =
+              document.getElementById("trajectory-loading");
+            if (loadingIndicator) {
+              loadingIndicator.style.display = "none";
+            }
+          }
+
+          chartsInitialized = true;
+        }
+
+        // Check if visualization tab is active initially and draw trajectory
+        if (
+          document.getElementById("visualization").classList.contains("active")
+        ) {
+          drawTrajectory();
+        }
+
+        // Check if graphs tab is active initially and initialize charts
+        if (document.getElementById("graphs").classList.contains("active")) {
+          initializeCharts();
+        }
+
+        // Add event listener for graphs tab to ensure charts are initialized
+        document
+          .querySelector('.tab-link[data-tab="graphs"]')
+          .addEventListener("click", initializeCharts);
+      });
+    </script>
+  </body>
+</html>
