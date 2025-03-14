@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="bg">
   <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Подробно решение на задача по физика</title>
     <style>
       :root {
@@ -2915,5 +2918,352 @@
           .addEventListener("click", initializeCharts);
       });
     </script>
-  </body>
+  <script>
+    // Глобални променливи за swipe навигацията
+    let swipeInitialized = false;
+    let currentSwipeListeners = [];
+    let hintContainer = null;
+    
+    // Обединен единичен DOMContentLoaded event listener
+    document.addEventListener("DOMContentLoaded", function() {
+      // Функция, която обвива всички таблици в контейнер за скролиране
+      wrapTablesInScrollContainers();
+      
+      // Малко забавяне за проверка на хоризонтален скрол
+      setTimeout(() => {
+        addScrollIndicators();
+      }, 300);
+      
+      // Инициализиране на swipe навигация
+      initSwipeNavigation();
+      
+      // Event listener за resize с дросел (throttle) функция
+      let resizeTimeout;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(function() {
+          // Проверяваме дали трябва да инициализираме или премахнем swipe навигацията
+          const isMobile = window.innerWidth <= 768;
+          
+          if (isMobile && !swipeInitialized) {
+            initSwipeNavigation();
+          } else if (!isMobile && swipeInitialized) {
+            removeSwipeNavigation();
+          } else if (isMobile) {
+            // Просто обновяваме индикаторите
+            updateSwipeHints();
+          }
+          
+          // Обновяваме обвивките на таблиците
+          wrapTablesInScrollContainers();
+          addScrollIndicators();
+        }, 200);
+      });
+    });
+    
+    // Функция, която обвива всички таблици в контейнер за скролиране
+    function wrapTablesInScrollContainers() {
+      const tables = document.querySelectorAll('table');
+      tables.forEach(table => {
+        // Проверка дали таблицата вече е в контейнер
+        if (table.parentElement && table.parentElement.className !== 'table-container') {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'table-container';
+          // Безопасно вмъкване на контейнера
+          if (table.parentNode) {
+            table.parentNode.insertBefore(wrapper, table);
+            wrapper.appendChild(table);
+          }
+        }
+      });
+    }
+    
+    // Функция за добавяне на индикатори за скролиране
+    function addScrollIndicators() {
+      // Проверка за мобилно устройство
+      const isMobile = window.innerWidth <= 768;
+      if (!isMobile) return;
+      
+      // Премахваме съществуващите индикатори първо
+      document.querySelectorAll('.scroll-indicator').forEach(el => el.remove());
+      
+      // Добавяме индикатор за хоризонтален скрол при таблици на мобилни
+      const tableContainers = document.querySelectorAll('.table-container');
+      tableContainers.forEach(container => {
+        // Проверяваме дали контейнерът съществува и е видим
+        if (container && container.offsetParent !== null) {
+          // Проверка дали има нужда от хоризонтален скрол
+          if (container.scrollWidth > container.clientWidth) {
+            const indicator = document.createElement('div');
+            indicator.className = 'scroll-indicator';
+            indicator.innerHTML = '← плъзнете →';
+            // Безопасно вмъкване на индикатора
+            if (container.parentNode) {
+              container.parentNode.insertBefore(indicator, container.nextSibling);
+            }
+          }
+        }
+      });
+    }
+    
+    // Функция за добавяне на swipe навигация на мобилни устройства
+    function initSwipeNavigation() {
+      // Проверка дали е мобилно устройство (под 768px)
+      const isMobile = window.innerWidth <= 768;
+      if (!isMobile) return; // Прилагаме само на мобилни устройства
+      
+      // Проверяваме дали вече е инициализирано
+      if (swipeInitialized) return;
+      
+      const pages = document.querySelectorAll('.page');
+      const tabLinks = document.querySelectorAll('.tab-link');
+      
+      // Прекратяваме, ако няма страници или табове
+      if (!pages.length || !tabLinks.length) return;
+      
+      // Запазваме IDs на страниците в масив за лесна навигация
+      const pageIds = Array.from(pages).map(page => page.id).filter(id => id); // филтрираме празни ID
+      
+      // Прекратяваме, ако няма валидни ID-та
+      if (!pageIds.length) return;
+      
+      // Маркираме като инициализирано
+      swipeInitialized = true;
+      
+      // Функция за намиране на текущата активна страница
+      function getCurrentPageIndex() {
+        const activePage = document.querySelector('.page.active');
+        return activePage ? pageIds.indexOf(activePage.id) : 0;
+      }
+      
+      // Функция за преход към страница по индекс
+      function navigateToPage(index) {
+        // Валидираме индекса
+        if (index < 0) index = 0;
+        if (index >= pageIds.length) index = pageIds.length - 1;
+        
+        // Запазваме текущия индекс преди навигацията
+        const currentIndex = getCurrentPageIndex();
+        
+        // Намираме съответния link и симулираме клик
+        const targetTabId = pageIds[index];
+        const targetTabLink = document.querySelector(`.tab-link[data-tab="${targetTabId}"]`);
+        if (targetTabLink) {
+          // Определяме посоката на swipe преди да сменим страницата
+          const direction = index > currentIndex ? 'left' : 'right';
+          
+          targetTabLink.click();
+          
+          // Плавно скролиране нагоре към началото на страницата
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+          
+          // Добавяме визуално указание за посоката на swipe (ефект за обратна връзка)
+          showSwipeIndicator(direction);
+        }
+      }
+      
+      // Създаваме и добавяме визуален индикатор за swipe
+      let indicatorTimeout;
+      function showSwipeIndicator(direction) {
+        // Премахваме съществуващ индикатор, ако има
+        const existingIndicator = document.querySelector('.swipe-indicator');
+        if (existingIndicator) existingIndicator.remove();
+        
+        // Създаваме нов индикатор
+        const indicator = document.createElement('div');
+        indicator.className = 'swipe-indicator';
+        
+        // Определяме позицията и стрелката в зависимост от посоката
+        if (direction === 'left') {
+          indicator.style.right = '10px';
+          indicator.innerHTML = '→';
+        } else {
+          indicator.style.left = '10px';
+          indicator.innerHTML = '←';
+        }
+        
+        // Добавяме индикатора към страницата, ако съществува body
+        if (document.body) {
+          document.body.appendChild(indicator);
+          
+          // Задаваме автоматично премахване след кратък период
+          clearTimeout(indicatorTimeout);
+          indicatorTimeout = setTimeout(() => {
+            indicator.style.opacity = '0';
+            setTimeout(() => {
+              if (indicator.parentNode) {
+                indicator.parentNode.removeChild(indicator);
+              }
+            }, 500);
+          }, 800);
+        }
+      }
+      
+      // Добавяме event listeners за touch събития
+      function addTouchListeners() {
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        // Функция за touchstart събитие
+        function handleTouchStart(e) {
+          touchStartX = e.changedTouches[0].screenX;
+        }
+        
+        // Функция за touchend събитие
+        function handleTouchEnd(e) {
+          touchEndX = e.changedTouches[0].screenX;
+          handleSwipe();
+        }
+        
+        // Обработка на swipe жеста
+        function handleSwipe() {
+          const currentIndex = getCurrentPageIndex();
+          const swipeThreshold = 100; // Минимално разстояние за активиране на swipe
+          
+          if (touchEndX < touchStartX - swipeThreshold) {
+            // Swipe наляво - към следваща страница
+            navigateToPage(currentIndex + 1);
+          } else if (touchEndX > touchStartX + swipeThreshold) {
+            // Swipe надясно - към предишна страница
+            navigateToPage(currentIndex - 1);
+          }
+        }
+        
+        // Добавяме event listeners и ги запазваме за по-късно премахване
+        pages.forEach(page => {
+          page.addEventListener('touchstart', handleTouchStart, {passive: true});
+          page.addEventListener('touchend', handleTouchEnd, {passive: true});
+          
+          // Запазваме listeners, за да можем да ги премахнем по-късно
+          currentSwipeListeners.push({
+            element: page,
+            startListener: handleTouchStart,
+            endListener: handleTouchEnd
+          });
+        });
+      }
+      
+      // Добавяме продълговати индикатори за swipe при първо зареждане
+      function addSwipeHints() {
+        // Премахваме съществуващ контейнер, ако има
+        if (hintContainer) {
+          hintContainer.remove();
+        }
+        
+        const currentIndex = getCurrentPageIndex();
+        
+        // Създаваме контейнер за индикаторите
+        hintContainer = document.createElement('div');
+        hintContainer.className = 'swipe-hint-container';
+        
+        // Създаваме индикаторите за всяка страница
+        pageIds.forEach((pageId, index) => {
+          const isActive = index === currentIndex;
+          const pill = document.createElement('div');
+          pill.className = 'swipe-hint-pill';
+          
+          // Стилове за индикатора
+          pill.style.backgroundColor = isActive ? 'rgba(74, 144, 226, 0.9)' : 'rgba(0, 0, 0, 0.2)';
+          pill.style.width = isActive ? '20px' : '12px';
+          
+          hintContainer.appendChild(pill);
+        });
+        
+        // Добавяме инструкцията за swipe
+        const textHint = document.createElement('div');
+        textHint.className = 'swipe-text-hint';
+        textHint.innerText = 'Плъзнете наляво/надясно за навигация';
+        hintContainer.appendChild(textHint);
+        
+        // Добавяме контейнера към страницата
+        if (document.body) {
+          document.body.appendChild(hintContainer);
+          
+          // Скриване на текстовата инструкция след няколко секунди
+          setTimeout(() => {
+            if (textHint) {
+              textHint.style.opacity = '0';
+            }
+          }, 5000);
+        }
+      }
+      
+      // Функция за обновяване на индикаторите при промяна на страницата
+      function updateSwipeHints() {
+        if (!hintContainer) return;
+        
+        const currentIndex = getCurrentPageIndex();
+        const pills = hintContainer.querySelectorAll('.swipe-hint-pill');
+        
+        pills.forEach((pill, index) => {
+          // Променяме цвета и размера на индикаторите
+          pill.style.backgroundColor = index === currentIndex ? 
+            'rgba(74, 144, 226, 0.9)' : 'rgba(0, 0, 0, 0.2)';
+          pill.style.width = index === currentIndex ? '20px' : '12px';
+        });
+      }
+      
+      // Добавяме listeners за tab линковете
+      tabLinks.forEach(link => {
+        // Проверяваме дали вече има click listener за обновяване на индикаторите
+        const hasClickListener = link.getAttribute('data-has-update-listener') === 'true';
+        
+        if (!hasClickListener) {
+          link.addEventListener('click', updateSwipeHints);
+          link.setAttribute('data-has-update-listener', 'true');
+        }
+      });
+      
+      // Инициализация на swipe функционалността
+      addTouchListeners();
+      addSwipeHints();
+    }
+    
+    // Функция за премахване на swipe навигацията
+    function removeSwipeNavigation() {
+      if (!swipeInitialized) return;
+      
+      // Премахване на event listeners
+      currentSwipeListeners.forEach(item => {
+        item.element.removeEventListener('touchstart', item.startListener);
+        item.element.removeEventListener('touchend', item.endListener);
+      });
+      
+      // Изчистване на масива
+      currentSwipeListeners = [];
+      
+      // Премахване на swipe индикаторите
+      if (hintContainer && hintContainer.parentNode) {
+        hintContainer.parentNode.removeChild(hintContainer);
+      }
+      hintContainer = null;
+      
+      // Маркираме като неинициализирано
+      swipeInitialized = false;
+    }
+    
+    // Функция за обновяване на swipe индикаторите
+    function updateSwipeHints() {
+      if (!hintContainer) return;
+      
+      const pages = document.querySelectorAll('.page');
+      const pageIds = Array.from(pages).map(page => page.id).filter(id => id);
+      
+      const activePage = document.querySelector('.page.active');
+      const currentIndex = activePage ? pageIds.indexOf(activePage.id) : 0;
+      
+      const pills = hintContainer.querySelectorAll('.swipe-hint-pill');
+      
+      pills.forEach((pill, index) => {
+        // Променяме цвета и размера на индикаторите
+        pill.style.backgroundColor = index === currentIndex ? 
+          'rgba(74, 144, 226, 0.9)' : 'rgba(0, 0, 0, 0.2)';
+        pill.style.width = index === currentIndex ? '20px' : '12px';
+      });
+    }
+    </script>
+    </body>
 </html>
